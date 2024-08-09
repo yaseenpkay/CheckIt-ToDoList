@@ -1,0 +1,41 @@
+/* src/styles/Header.css */
+.app-header {
+  background-color: #333;
+  color: white;
+  padding: 10px 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+.nav-links {
+  list-style-type: none;
+  display: flex;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
