@@ -19,6 +19,8 @@ let tasks = [
     completed: false,
     section: "Inbox",
     date: "2024-08-03",
+    userId: "user2@gmail.com",
+    teamId: null,
   },
   {
     id: "2",
@@ -28,6 +30,8 @@ let tasks = [
     completed: false,
     section: "Inbox",
     date: "2024-08-03",
+    userId: "user2@gmail.com",
+    teamId: null,
   },
 ];
 
@@ -36,15 +40,41 @@ let section = [
   { id: "2", sectionName: "Project 2" },
 ];
 
+let teams = [
+  {
+    id: "1",
+    name: "Design Team",
+    dateCreated: "2024-08-03",
+    createdBy: "user1@gmail.com",
+    members: ["user2@gmail.com", "user3@gmail.com", "user4@gmail.com"],
+  },
+];
+let teamTasks = [
+  {
+    id: "teamTask1",
+    name: "Team Task Name",
+    description: "Team Task Description",
+    priority: "High",
+    completed: false,
+    date: "2024-08-05",
+    teamId: "team1",
+    assignedTo: ["user2@gmail.com", "user3@gmail.com"],
+  },
+];
+
 app.get("/tasks", (req, res) => {
   res.json(tasks);
 });
 
-app.get("/section", (req, res) => {
+app.get("/sections", (req, res) => {
   res.json(section);
 });
 
-app.post("/section", (req, res) => {
+app.get("/teams", (req, res) => {
+  res.json(teams);
+});
+
+app.post("/sections", (req, res) => {
   const newSection = {
     id: String(Date.now()),
     sectionName: req.body.sectionName,
@@ -67,6 +97,18 @@ app.post("/tasks", (req, res) => {
   res.status(201).json(newTask);
 });
 
+app.post("/teams", (req, res) => {
+  const newTeam = {
+    id: String(Date.now()),
+    name: req.body.name,
+    dateCreated: new Date(),
+    createdBy: "user1@gmail.com",
+    members: [],
+  };
+  teams.push(newTeam);
+  res.status(201).json(newTeam);
+});
+
 app.put("/tasks/:id", (req, res) => {
   const task = tasks.find((t) => t.id === req.params.id);
   if (task) {
@@ -83,7 +125,20 @@ app.put("/tasks/:id", (req, res) => {
   }
 });
 
-app.put("/section/:id", (req, res) => {
+app.put("/tasks/:id/section", (req, res) => {
+  const taskId = req.params.id;
+  const { newSection } = req.body;
+
+  const task = tasks.find((t) => t.id === taskId);
+  if (task) {
+    task.section = newSection;
+    res.json(task);
+  } else {
+    res.status(404).json({ message: "Task not found" });
+  }
+});
+
+app.put("/sections/:id", (req, res) => {
   const sections = section.find((s) => s.id === req.params.id);
   if (sections) {
     sections.sectionName = req.body.sectionName || sections.sectionName;
@@ -93,7 +148,7 @@ app.put("/section/:id", (req, res) => {
   }
 });
 
-app.delete("/section/:id", (req, res) => {
+app.delete("/sections/:id", (req, res) => {
   const sectionId = req.params.id;
   const initialLength = section.length;
   section = section.filter((s) => s.id !== sectionId);

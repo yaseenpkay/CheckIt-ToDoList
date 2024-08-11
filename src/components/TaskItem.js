@@ -25,6 +25,10 @@ function TaskItem({ task, handleCheckboxChange, setTasks, sections }) {
     }
   };
 
+  const handleDragStart = (e) => {
+    e.dataTransfer.setData("taskId", task.id);
+  };
+
   const handleEditClick = () => {
     setIsEditing(true);
   };
@@ -65,7 +69,11 @@ function TaskItem({ task, handleCheckboxChange, setTasks, sections }) {
   };
 
   return (
-    <div className="relative w-4/6 p-2 rounded-s border-t-2 mt-2 border-darkOrange border-opacity-20">
+    <div
+      className="relative w-4/6 p-2 rounded-s border-t-2 mt-2 border-darkOrange border-opacity-20"
+      draggable
+      onDragStart={handleDragStart}
+    >
       <div
         className={`absolute -top-1 left-0 w-3 h-3 ${getDotColor(
           task.priority

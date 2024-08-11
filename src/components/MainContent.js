@@ -3,6 +3,7 @@ import SideBar from "./SideBar";
 import AddItem from "./AddItem";
 import TaskItem from "./TaskItem";
 import axios from "axios";
+import InviteMembers from "./InviteMembers";
 
 function MainContent() {
   const [selectedSection, setSelectedSection] = useState("Today");
@@ -10,6 +11,28 @@ function MainContent() {
 
   const [tasks, setTasks] = useState([]);
   const [sections, setSection] = useState([]);
+  const [teams, setTeams] = useState([]);
+
+  const [isTeamSelected, setTeamSelected] = useState(false);
+
+  const handleTaskDrop = async (taskId, newSection) => {
+    try {
+      // Update task section locally
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, section: newSection } : task
+        )
+      );
+
+      // Optionally, make an API call here to persist the changes to your backend
+      await axios.put(`http://localhost:5000/tasks/${taskId}/sections`, {
+        newSection,
+      });
+    } catch (error) {
+      console.error("Error updating task section:", error);
+      // Optionally, revert the local update if the API call fails
+    }
+  };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -45,7 +68,7 @@ function MainContent() {
   useEffect(() => {
     const fetchSections = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/section");
+        const response = await axios.get("http://localhost:5000/sections");
         setSection(response.data);
       } catch (error) {
         console.error("Error fetching sections: ", error);
@@ -55,9 +78,22 @@ function MainContent() {
     fetchSections();
   }, []);
 
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await axios.get("http://localhost:5000/teams");
+        setTeams(response.data);
+      } catch (error) {
+        console.error("Error fetching Teams: ", error);
+      }
+    };
+
+    fetchTeams();
+  }, []);
+
   const handleSectionDelete = async (sectionId) => {
     try {
-      await axios.delete(`http://localhost:5000/section/${sectionId}`);
+      await axios.delete(`http://localhost:5000/sections/${sectionId}`);
       console.log("Section deleted");
       // Update your state or UI to remove the task
     } catch (error) {
@@ -99,18 +135,27 @@ function MainContent() {
   };
 
   const handleSectionChange = (sectionName) => {
+    setTeamSelected(false);
     setSelectedSection(sectionName);
+  };
+  const handleTeamChange = (teamName) => {
+    setTeamSelected(true);
+    setSelectedSection(teamName);
   };
   console.log(tasks);
 
   return (
-    <div className="flex w-full min-h-screen overflow-y-auto">
+    <div className="flex w-full h-screen overflow-y-auto">
       <SideBar
         toggleAddItem={toggleAddItem}
         sections={sections}
         setSection={setSection}
+        teams={teams}
+        setTeams={setTeams}
         handleSectionChange={handleSectionChange}
+        handleTeamChange={handleTeamChange}
         handleSectionDelete={handleSectionDelete}
+        handleTaskDrop={handleTaskDrop}
       />
 
       {isPopupVisible && (
@@ -128,40 +173,46 @@ function MainContent() {
           </h1>
         </div>
 
-        <button
-          onClick={toggleAddItem}
-          sections={sections}
-          className=" m-1 rounded w-4/6 text-midOrange text-left p-2 border-t-2"
-        >
-          <div className="flex">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="size-6  mr-1 justify-end"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 4.5v15m7.5-7.5h-15"
-              />
-            </svg>
-            Add Task
-          </div>
-        </button>
-
         <div className="w-full flex flex-col items-center">
-          {filteredTasks.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              handleCheckboxChange={handleCheckboxChange}
-              setTasks={setTasks}
-              sections={sections}
-            /> // Render each task item
-          ))}
+          {!isTeamSelected && (
+            <>
+              <button
+                onClick={toggleAddItem}
+                sections={sections}
+                className=" m-1 rounded w-4/6 text-midOrange text-left p-2 border-t-2"
+              >
+                <div className="flex">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-6  mr-1 justify-end"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M12 4.5v15m7.5-7.5h-15"
+                    />
+                  </svg>
+                  Add Task
+                </div>
+              </button>
+
+              {filteredTasks.map((task) => (
+                <TaskItem
+                  key={task.id}
+                  task={task}
+                  handleCheckboxChange={handleCheckboxChange}
+                  setTasks={setTasks}
+                  sections={sections}
+                />
+              ))}
+            </>
+          )}
+
+          {isTeamSelected && <InviteMembers />}
         </div>
       </div>
     </div>

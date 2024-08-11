@@ -13,7 +13,7 @@ function AddSection({ onClose, addSection }) {
     };
     try {
       const response = await axios.post(
-        "http://localhost:5000/section",
+        "http://localhost:5000/sections",
         newSection
       );
       console.log("Section added :", response.data);
@@ -38,6 +38,7 @@ function AddSection({ onClose, addSection }) {
               placeholder="Project Name"
               onChange={(e) => setSectionName(e.target.value)}
               value={sectionName}
+              required
               className="w-full p-2 border border-gray-300 rounded-md shadow-sm sm:text-sm"
             />
           </div>

@@ -1,11 +1,11 @@
-// ProjectButton.js
+// TeamButton.js
 
 import React, { useState } from "react";
 import axios from "axios";
 
-const ProjectButton = ({
-  section,
-  handleSectionChange,
+const TeamButton = ({
+  team,
+  handleTeamChange,
   handleSectionDelete,
   setSection,
   handleTaskDrop,
@@ -14,72 +14,72 @@ const ProjectButton = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
-  const [editedSection, setEditedSection] = useState({
-    sectionName: section.sectionName, // Initialize with the existing value
-  });
+  //   const [editedSection, setEditedSection] = useState({
+  //     sectionName: section.sectionName, // Initialize with the existing value
+  //   });
 
-  function handleEditSection() {
-    setIsEditing(true);
-  }
+  //   function handleEditSection() {
+  //     setIsEditing(true);
+  //   }
 
-  const handleDragOver = (e) => {
-    e.preventDefault();
-  };
+  //   const handleDragOver = (e) => {
+  //     e.preventDefault();
+  //   };
 
-  const handleDrop = (e) => {
-    const taskId = e.dataTransfer.getData("taskId");
-    handleTaskDrop(taskId, label); // Call the handler with taskId and new section name
-  };
+  //   const handleDrop = (e) => {
+  //     const taskId = e.dataTransfer.getData("taskId");
+  //     handleTaskDrop(taskId, label); // Call the handler with taskId and new section name
+  //   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditedSection((prevSection) => ({
-      ...prevSection,
-      [name]: value,
-    }));
-  };
+  //   const handleInputChange = (e) => {
+  //     const { name, value } = e.target;
+  //     setEditedSection((prevSection) => ({
+  //       ...prevSection,
+  //       [name]: value,
+  //     }));
+  //   };
 
-  const handleSaveClick = () => {
-    handleUpdateSection();
-    setIsEditing(false);
-  };
+  //   const handleSaveClick = () => {
+  //     handleUpdateSection();
+  //     setIsEditing(false);
+  //   };
 
-  const handleUpdateSection = async () => {
-    try {
-      const response = await axios.put(
-        `http://localhost:5000/sections/${section.id}`,
-        editedSection
-      );
-      console.log("section updated:", response.data);
-      // Update your state or UI to reflect the updated section
-      setSection((prevSections) =>
-        prevSections.map((s) =>
-          s.id === section.id
-            ? { ...s, sectionName: editedSection.sectionName }
-            : s
-        )
-      );
-    } catch (error) {
-      console.error("Error updating section:", error);
-    }
-  };
+  //   const handleUpdateSection = async () => {
+  //     try {
+  //       const response = await axios.put(
+  //         `http://localhost:5000/sections/${section.id}`,
+  //         editedSection
+  //       );
+  //       console.log("section updated:", response.data);
+  //       // Update your state or UI to reflect the updated section
+  //       setSection((prevSections) =>
+  //         prevSections.map((s) =>
+  //           s.id === section.id
+  //             ? { ...s, sectionName: editedSection.sectionName }
+  //             : s
+  //         )
+  //       );
+  //     } catch (error) {
+  //       console.error("Error updating section:", error);
+  //     }
+  //   };
 
   return (
     <div
       className="flex  items-center justify-between p-2 "
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      //   onDragOver={handleDragOver}
+      //   onDrop={handleDrop}
     >
       {!isEditing && (
         <button
           className=" text-midOrange rounded overflow-hidden whitespace-nowrap text-ellipsis"
-          onClick={() => handleSectionChange(section.sectionName)}
+          onClick={() => handleTeamChange(team.name)}
         >
-          {section.sectionName}
+          {team.name}
         </button>
       )}
 
-      {isEditing && (
+      {/* {isEditing && (
         <input
           type="text"
           name="sectionName"
@@ -130,9 +130,9 @@ const ProjectButton = ({
             </button>
           </button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
 
-export default ProjectButton;
+export default TeamButton;
